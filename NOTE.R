@@ -1,7 +1,6 @@
 ### 2017-04-19
 ## yahoo weather page: https://www.yahoo.com/news/weather/
-## github origins: https://github.com/rstudio/shiny-examples.git
-## magrittr: https://github.com/tidyverse/magrittr.git
+
 
 ### 2017-04-18
 ## OS.TYPE

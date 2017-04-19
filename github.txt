@@ -1,0 +1,8 @@
+
+
+shiny-examples:
+  https://github.com/rstudio/shiny-examples.git
+magrittr:
+  https://github.com/tidyverse/magrittr.git
+DMwR:
+  https://github.com/cran/DMwR
