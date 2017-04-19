@@ -1,0 +1,8 @@
+
+BOOKS【书籍内容整理】
+COLLECTIONS【整理收录一切R语言相关内容，下设不同内容分类】
+	BASES【基础知识】
+	THEMES【主题】
+JOBS【工作项目】
+PRIVATES【个人项目】
+TESTS【练习和试验项目】

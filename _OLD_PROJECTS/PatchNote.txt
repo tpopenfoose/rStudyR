@@ -1,0 +1,11 @@
+2016-02-15
+	增加文件夹：JOBS：工作项目
+2016-02-14
+	创建此文件夹，一切R工程项目将归于此文件夹下
+		COLLECTIONS：整理收录一切R语言相关内容，下设不同内容分类
+		BOOKS：书籍内容整理
+		TESTS：练习和试验项目
+		PRIVATES：个人项目
+		OLD：历史项目暂时放到此文件夹下
+			删除项目ReportResearcher: 版本旧
+			删除项目ReportAnalyzer: 版本旧
