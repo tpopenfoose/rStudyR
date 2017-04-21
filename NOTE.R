@@ -1,3 +1,23 @@
+
+
+
+## 2017-04-21
+library(R6)
+
+TEST <- R6Class(
+  public = list(
+    TEST.FUN = function(n) naive.vector.of.squares(n)
+  )
+)
+naive.vector.of.squares <- function(n) {
+  v <- 1:n
+  for (i in 1:n) {
+    v[i] <- v[i]^2
+  }
+}
+
+# with `ByteCompile: true` in DESCRIPTION, compiled; without, not 
+
 ### 2017-04-19
 ## yahoo weather page: https://www.yahoo.com/news/weather/
 
@@ -6,7 +26,7 @@
 ## OS.TYPE
 .Platform$OS.type
 ## for package writing
-# add `` in DESCRIPTION file to compiler all functions, this method is for S4(S3?), but not for R6
+# add `ByteCompile: true` in DESCRIPTION file to compiler all functions, this method is for S4(S3?), but not for R6
 
 ## R6 methods compiler
 ABC <- R6Class(
