@@ -13,6 +13,6 @@ muffin.ML.SAE <- R6Class(
     
   ),
   private = list(
-    
+    file.extension = 'sae'
   )
 )

@@ -69,15 +69,52 @@ data.balance <- function(cleaned.data, balance.ratio.threshold=1.05) {
   }
 }
 
-best.input <- function(balanced.data, holdout.ratio=2 / 3, holdout.mode='stratified') {
+best.importance <- function(balanced.data, holdout.ratio=2 / 3, holdout.mode='stratified',
+                            pre.process.mode=c("center", "spatialSign"),
+                            mtry=1, ntree=300, nodesize=1, threads='auto',
+                            nbest=10, npar) {
   index <- rminer::holdout(y = balanced.data[, OUTPUT], ratio = holdout.ratio, mode = holdout.mode)
   train.input <- balanced.data[index$tr, !'OUTPUT']
   test.input <- balanced.data[index$ts, !'OUTPUT']
   train.output <- balanced.data[index$tr, OUTPUT]
   test.output <- balanced.data[index$ts, OUTPUT]
+  pre.process <- caret::preProcess(train.input, method = pre.process.mode)
+  train.input %<>% predict(pre.process, .)
+  test.input %<>% predict(pre.process, .)
+  random.uniform.forest <- randomUniformForest(
+    X = train.input,
+    Y = train.output,
+    xtest = test.input,
+    ytest = test.output,
+    mtry = mtry,
+    ntree = mtree,
+    nodesize = nodesize,
+    threads = threads
+  )
+  random.uniform.forest.importance <- importance(random.uniform.forest, Xtest=test.input)
+  best.importance <-
+    random.uniform.forest.importance$localVariableImportance$classVariableImportance %>%
+    head(10) %>% rownames
+  
+  best.sell.importance <- partialImportance(X = test.input, random.uniform.forest.importance,
+                                            whichClass = "-1", nLocalFeatures = 7) %>%
+    row.names %>% as.numeric %>% colnames(test.input)[.]
+  
+  best.buy.importance <- partialImportance(X = test.input, random.uniform.forest.importance,
+                                           whichClass = "1", nLocalFeatures = 7) %>% 
+    row.names %>% as.numeric %>% colnames(test.input)[.]
+  list(
+    BEST = best.importance,
+    BEST.BUY = best.buy.importance,
+    BEST.SELL = best.sell.importance
+  )
 }
 
-
+#### file ####
+model.file.path <- function(model.file.dir, symbol, timeframe, file.extension) {
+  sprintf('%s_%s.%s', symbol, timeframe, file.extension) %>%
+    file.path(model.file.dir, .)
+}
 
 
 
