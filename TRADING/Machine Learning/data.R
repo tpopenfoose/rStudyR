@@ -35,7 +35,7 @@ fun.input.default <- function(price, period=16) {
   cbind(adx, aroon, atr, cci, chv, cmo, macd, rsi, stoh, smi, vol)
 }
 
-fun.output.default <- function(price, ch = ch, mode=c('median', 'high.low', 'close')) {
+fun.output.default <- function(price, change = 0.0050, mode=c('median', 'high.low', 'close')) {
   using.price <- switch(
     match.arg(mode),
     'median' = price[, MEDIAN],
@@ -69,7 +69,10 @@ data.balance <- function(cleaned.data, balance.ratio.threshold=1.05) {
   }
 }
 
-best.importance <- function(balanced.data, holdout.ratio=2 / 3, holdout.mode='stratified',
+
+
+
+best.importance <- function(balanced.data, holdout.ratio=2/3, holdout.mode='stratified',
                             pre.process.mode=c("center", "spatialSign"),
                             mtry=1, ntree=300, nodesize=1, threads='auto',
                             nbest=10, npar) {
@@ -109,6 +112,13 @@ best.importance <- function(balanced.data, holdout.ratio=2 / 3, holdout.mode='st
     BEST.SELL = best.sell.importance
   )
 }
+
+
+
+
+
+
+
 
 #### file ####
 model.file.path <- function(model.file.dir, symbol, timeframe, file.extension) {

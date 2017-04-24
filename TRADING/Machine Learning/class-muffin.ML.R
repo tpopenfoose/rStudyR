@@ -28,20 +28,31 @@ muffin.ML <- R6Class(
   ),
   private = list(
     file.extension = NULL,
+    save.members = NULL,
     
     symbol = NULL,
     timeframe = NULL,
     model.file.path = NULL,
     
     model = NULL,
-    fun.input = NULL,
-    fun.output = NULL,
+    fun.input = fun.input.default,
+    fun.output = fun.output.default,
     
-    load.model.file = function() {
-      #### TODO
+    
+    load.model.file = function(members=private$save.members, file=private$model.file.path) {
+      env <- environment()
+      load(file = file)
+      sapply(members, function(member) {
+        private[[member]] <- get(member, envir = env)
+      })
     },
-    save.model.file = function() {
-      #### TODO
+    save.model.file = function(members=private$save.members, file=private$model.file.path) {
+      env <- environment()
+      sapply(members, function(member) {
+        assign(member, private[[member]], envir = env)
+      })
+      save(list = members, file = file)
     }
+    
   )
 )
