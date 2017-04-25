@@ -6,8 +6,11 @@ library(caret)
 library(rminer)
 library(randomUniformForest)
 
-price.factors <- function(price) {
-  price[, .(OPEN, HIGH, LOW, CLOSE, MEDIAN = (HIGH + LOW) * 0.5)]
+# price.factors <- function(price) {
+#   price[, .(OPEN, HIGH, LOW, CLOSE, MEDIAN = (HIGH + LOW) * 0.5)]
+# }
+price.data.add.median <- function(price.data) {
+  price.data[, MEDIAN := (HIGH + LOW) * 0.5]
 }
 
 fun.input.default <- function(price, period=16) {
@@ -44,7 +47,7 @@ fun.output.default <- function(price, change = 0.0050, mode=c('median', 'high.lo
   )
   zz <- ZigZag(using.price, change = ch, percent = FALSE, retrace = FALSE, lastExtreme = TRUE)
   sig <- zz %>% diff %>% c(0, .) %>% sign
-  cbind(zz, sig)
+  # cbind(zz, sig)
 }
 
 data.clean <- function(input.table, output.table) {
