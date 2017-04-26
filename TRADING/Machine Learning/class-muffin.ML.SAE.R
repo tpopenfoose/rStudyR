@@ -5,6 +5,7 @@
 ############################################################
 
 library(R6)
+library(deepnet)
 
 muffin.ML.SAE <- R6Class(
   classname = 'Stacked Auto-Encoder',
@@ -16,3 +17,9 @@ muffin.ML.SAE <- R6Class(
     file.extension = 'sae'
   )
 )
+
+
+## functions
+# sae.dnn.train()
+
+while
