@@ -24,11 +24,19 @@ muffin.ML <- R6Class(
       ## TODO
       private$price.data %<>%
         rbind(price.data %>% price.data.add.median, use.names = TRUE, fill = TRUE)
-      private$input %<>% private$fun.input(private$price.data)
-      private$output %<>% private$fun.output(private$price.data)
+      private$model.data <- cbind(private$fun.input(private$price.data),
+                                  OUTPUT = private$fun.output(private$price.data))
+      # private$input %<>% private$fun.input(private$price.data)
+      # private$output %<>% private$fun.output(private$price.data)
     },
     build.model = function() {
       ## TODO
+      model.data <-
+        private$model.data %>%
+        na.omit %>%
+        private$model.data.cutoff.high.correlation(.) %>%
+        private$model.data.balance(.)
+      private$best.factors <- private$best.importance(model.data)
       
     },
     predict = function() {
@@ -69,12 +77,40 @@ muffin.ML <- R6Class(
     model.file.path = NULL,
     
     price.data = NULL,
-    input = NULL,
-    output = NULL,
+    model.data = NULL,
+    # input = NULL,
+    # output = NULL,
+    
+    ratio.cutoff.high.correlation = 0.9,
+    ratio.balance = 1.05,
+    
+    best.factors = NULL,
+    
+    ## cutoff high correlation of model data
+    model.data.cutoff.high.correlation = function(model.data,
+                                                  cutoff.ratio=private$ratio.cutoff.high.correlation) {
+      input.cutoff(model.data, cutoff.ratio)
+    },
+    
+    ## balance model data
+    model.data.balance = function(model.data, balance.ratio=private$ratio.balance) {
+      data.balance(model.data, balance.ratio)
+    },
+    
+    ## best importance
+    best.importance = function(model.data) {
+      best.importance(model.data,
+                      holdout.ratio=2/3, holdout.mode='stratified',
+                      pre.process.mode=c("center", "spatialSign"),
+                      mtry=1, ntree=300, nodesize=1, threads='auto',
+                      nbest=10, npar)
+    },
     
     model = NULL,
     fun.input = fun.input.default,
     fun.output = fun.output.default
+    
+
     
   )
 )

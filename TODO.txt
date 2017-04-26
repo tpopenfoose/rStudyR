@@ -1,0 +1,7 @@
+
+
+
+
+2017-04-26
+  Learn package: testthat
+  Learn examples of randomUniformForest

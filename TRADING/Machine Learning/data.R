@@ -45,14 +45,14 @@ fun.output.default <- function(price, change = 0.0050, mode=c('median', 'high.lo
     'high.low' = price[, .(HIGH, LOW)],
     'close' = price[, CLOSE]
   )
-  zz <- ZigZag(using.price, change = ch, percent = FALSE, retrace = FALSE, lastExtreme = TRUE)
+  zz <- ZigZag(using.price, change = change, percent = FALSE, retrace = FALSE, lastExtreme = TRUE)
   sig <- zz %>% diff %>% c(0, .) %>% sign
   # cbind(zz, sig)
 }
 
-data.clean <- function(input.table, output.table) {
-  cbind(input, OUTPUT = output.table %>% as.factor) %>% na.omit
-}
+# data.clean <- function(input.table, output.table) {
+#   cbind(input, OUTPUT = output.table %>% as.factor) %>% na.omit
+# }
 
 input.cutoff <- function(cleaned.data, cutoff=0.9) {
   high.correlation <- 
@@ -65,20 +65,23 @@ input.cutoff <- function(cleaned.data, cutoff=0.9) {
 data.balance <- function(cleaned.data, balance.ratio.threshold=1.05) {
   output <- table(cleaned.data$OUTPUT)
   ratio <- max(output) / min(output)
+  cleaned.data[, OUTPUT := as.factor(OUTPUT)]
   if(ratio <= balance.ratio.threshold) {
     cleaned.data
   } else {
-    caret::upSample(x = cleaned.data[, !'OUTPUT'], y = cleaned.data[, OUTPUT], yname = 'OUTPUT')
+    caret::upSample(x = cleaned.data[, !'OUTPUT'], y = cleaned.data[, OUTPUT], yname = 'OUTPUT') %>%
+      as.data.table
   }
 }
-
 
 
 
 best.importance <- function(balanced.data, holdout.ratio=2/3, holdout.mode='stratified',
                             pre.process.mode=c("center", "spatialSign"),
                             mtry=1, ntree=300, nodesize=1, threads='auto',
-                            nbest=10, npar) {
+                            nbest=10, nbestB=7, nbestS=7) {
+  ## split into 2 functions
+  ## one is preprocess, the other just this importance
   index <- rminer::holdout(y = balanced.data[, OUTPUT], ratio = holdout.ratio, mode = holdout.mode)
   train.input <- balanced.data[index$tr, !'OUTPUT']
   test.input <- balanced.data[index$ts, !'OUTPUT']
@@ -93,21 +96,21 @@ best.importance <- function(balanced.data, holdout.ratio=2/3, holdout.mode='stra
     xtest = test.input,
     ytest = test.output,
     mtry = mtry,
-    ntree = mtree,
+    ntree = ntree,
     nodesize = nodesize,
     threads = threads
   )
   random.uniform.forest.importance <- importance(random.uniform.forest, Xtest=test.input)
   best.importance <-
     random.uniform.forest.importance$localVariableImportance$classVariableImportance %>%
-    head(10) %>% rownames
+    head(nbest) %>% rownames
   
   best.sell.importance <- partialImportance(X = test.input, random.uniform.forest.importance,
-                                            whichClass = "-1", nLocalFeatures = 7) %>%
+                                            whichClass = "-1", nLocalFeatures = nbestS) %>%
     row.names %>% as.numeric %>% colnames(test.input)[.]
   
   best.buy.importance <- partialImportance(X = test.input, random.uniform.forest.importance,
-                                           whichClass = "1", nLocalFeatures = 7) %>% 
+                                           whichClass = "1", nLocalFeatures = nbestB) %>% 
     row.names %>% as.numeric %>% colnames(test.input)[.]
   list(
     BEST = best.importance,
