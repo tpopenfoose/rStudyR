@@ -94,4 +94,4 @@ CLASSIFICATION.nnet2 <- R6Class(
 # TEST <- CLASSIFICATION.nnet$new()
 TEST <- CLASSIFICATION.nnet2$new()
 TEST$get('model')
-TEST$TEST()
+TEST$TEST() %T>% plot
