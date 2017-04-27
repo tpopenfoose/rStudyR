@@ -17,4 +17,4 @@ ird <- data.frame(rbind(iris3[,,1], iris3[,,2], iris3[,,3]),
 ir.nn2 <- nnet(species ~ ., data = ird, subset = samp, size = 2, rang = 0.1,
                decay = 5e-4, maxit = 200)
 table(ird$species[-samp], predict(ir.nn2, ird[-samp,], type = "class"))
-predict(ir.nn2, ird[-samp,], type = "raw")
+predict(ir.nn2, ird[-samp,], type = "class")

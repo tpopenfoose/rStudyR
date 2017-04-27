@@ -9,4 +9,4 @@ test_Var1 <- c(rnorm(50, 1, 0.5), rnorm(50, -0.6, 0.2)) %T>% print
 test_Var2 <- c(rnorm(50, -0.8, 0.2), rnorm(50, 2, 1)) %T>% print
 test_x <- matrix(c(test_Var1, test_Var2), nrow = 100, ncol = 2) %T>% print
 
-yy <- predict(nn, test_x, type = 'raw')#%T>% plot
+yy <- predict(nn, test_x[58,], type = 'raw') %T>% print
